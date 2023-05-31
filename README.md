@@ -10,6 +10,8 @@ A dockerised stack containing the following components:
 
 # Getting Started
 
+TODO
+
 1. Clone repo
 2. cd
 3. pip install for local dev
