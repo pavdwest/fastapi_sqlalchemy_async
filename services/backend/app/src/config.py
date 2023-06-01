@@ -15,6 +15,9 @@ REDIS_USERNAME = os.environ.get('REDIS_USERNAME')
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
 
 # Database
+SHARED_SCHEMA_NAME: str = 'shared'
+TENANT_SCHEMA_NAME: str = 'tenant'
+DATABASE_POOL_SIZE: int = 12
 DATABASE_HOST: str      = os.environ.get('DATABASE_HOST')
 DATABASE_PORT: int      = os.environ.get('DATABASE_PORT')
 DATABASE_USERNAME: str  = os.environ.get('DATABASE_USERNAME')

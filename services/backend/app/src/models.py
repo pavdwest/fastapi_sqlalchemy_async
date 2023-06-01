@@ -1,15 +1,19 @@
 from __future__ import annotations
+import uuid
 from functools import lru_cache
 from typing import List
 from datetime import datetime
+
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.future import select
 from inflection import titleize, pluralize, underscore
 from sqlalchemy_utils import get_class_by_table
 from sqlalchemy import Column, Integer, DateTime, String
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.dialects.postgresql import UUID
 
 from src.logging.service import logger
+from src.config import SHARED_SCHEMA_NAME, TENANT_SCHEMA_NAME
 from src.database.service import db
 
 
@@ -23,7 +27,19 @@ class TimestampsMixin:
 
 
 class IdentifierMixin:
-    identifier =  Column(String, primary_key=True)
+    identifier =  Column(String, unique=True)
+
+
+class GUIDMixin:
+    guid = Column(UUID(as_uuid=True), default=uuid.uuid4)
+
+
+class SharedModelMixin:
+    __table_args__ = { 'schema': SHARED_SCHEMA_NAME }
+
+
+class TenantModelMixin:
+    __table_args__ = { 'schema': TENANT_SCHEMA_NAME }
 
 
 class AppModel(IdMixin, TimestampsMixin, DeclarativeBase):
@@ -47,7 +63,7 @@ class AppModel(IdMixin, TimestampsMixin, DeclarativeBase):
         async with db.async_engine.begin() as conn:
             logger.warning('Creating tables...')
             # await conn.run_sync(cls.metadata.drop_all)
-            # await conn.run_sync(cls.metadata.create_all)
+            await conn.run_sync(cls.metadata.create_all)
 
     async def create(self):
         async with db.async_session() as session:
