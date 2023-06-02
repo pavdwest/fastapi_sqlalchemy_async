@@ -1,6 +1,6 @@
 # Overview
 
-A dockerised stack containing the following components:
+A dockerised multi-tenant (by schema) stack containing the following components:
 
 * FastAPI backend
 * Postgres 15 database
