@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from pydantic import BaseModel
 
 
@@ -12,7 +10,7 @@ class TenantCreate(BaseModel):
 
         schema_extra = {
             'example': {
-                'identifier': 'BlueMigrant',
+                'identifier': 'Some Important Client',
             }
         }
 
@@ -30,6 +28,6 @@ class TenantGet(BaseModel):
             'example': {
                 'id': 27,
                 'schema_name': 'f0e7207e-5568-45ff-b877-74eb658649de',
-                'identifier': 'BlueMigrant',
+                'identifier': 'Some Important Client',
             }
         }

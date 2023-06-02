@@ -60,20 +60,59 @@ class AppModel(IdMixin, TimestampsMixin, DeclarativeBase):
 
     @classmethod
     async def init_orm(cls):
-        async with db.async_engine.begin() as conn:
-            logger.warning('Creating tables...')
-            # await conn.run_sync(cls.metadata.drop_all)
-            await conn.run_sync(cls.metadata.create_all)
-
-    async def create(self):
-        async with db.async_session() as session:
-            async with session.begin():
-                session.add(self)
-                return self
+        # await cls.drop_tables()
+        await cls.create_tables()
 
     @classmethod
-    async def fetch_all(cls) -> List[AppModel]:
-        async with db.async_session() as session:
+    async def create_tables(cls, schema_name: str = SHARED_SCHEMA_NAME):
+        session = await db.get_session()
+        async with session.begin() as session_ctx:
+            await db.set_schema_context(session_ctx, schema_name)
+            conn = await session_ctx.connection()
+            logger.warning('Creating tables...')
+            await conn.run_sync(cls.metadata.create_all)
+            logger.warning('Tables created.')
+
+    @classmethod
+    async def drop_tables(cls, schema_name = SHARED_SCHEMA_NAME):
+        session = await db.get_session()
+        async with session.begin() as session_ctx:
+            await db.set_schema_context(session_ctx, schema_name)
+            conn = await session_ctx.connection()
+            logger.warning('Dropping tables...')
+            await conn.run_sync(cls.metadata.drop_all)
+            logger.warning('Tables dropped.')
+
+    async def create(self, schema_name: str = SHARED_SCHEMA_NAME) -> AppModel:
+        """
+        Persists this instance to the database.
+
+        Args:
+            schema_name (str, optional): Defaults to SHARED_SCHEMA_NAME.
+
+        Returns:
+            AppModel: Updated self
+        """
+        session = await db.get_session()
+        async with session.begin() as session_ctx:
+            await db.set_schema_context(session_ctx, schema_name)
+            session_ctx.add(self)
+            return self
+
+    @classmethod
+    async def fetch_all(cls, schema_name: str = SHARED_SCHEMA_NAME) -> List[AppModel]:
+        """
+        Retrieves all of the records in the database.
+
+        Args:
+            schema_name (str, optional): Defaults to SHARED_SCHEMA_NAME.
+
+        Returns:
+            List[AppModel]: _description_
+        """
+        session = await db.get_session()
+        async with session.begin() as session_ctx:
+            await db.set_schema_context(session_ctx, schema_name)
             q = select(cls.get_model_class())
-            res = await session.execute(q)
-            return [r for r in res.scalars()]
+            res = await session_ctx.execute(q)
+            return [i for i in res.scalars()]

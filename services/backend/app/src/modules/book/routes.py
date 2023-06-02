@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, status
 
 from src.modules.book.models import Book
-from src.modules.book.schemas import BookCreate, BookGet
+from src.modules.book.validators import BookCreate, BookGet
 
 
 model_class = Book

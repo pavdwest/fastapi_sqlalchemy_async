@@ -4,7 +4,7 @@ from fastapi import APIRouter, status
 
 from src.database.service import db
 from src.tenant.models import Tenant
-from src.tenant.schemas import TenantCreate, TenantGet
+from src.tenant.validators import TenantCreate, TenantGet
 
 
 model_class = Tenant
@@ -23,6 +23,6 @@ router = APIRouter(
     description='Endpoint description. Will use the docstring if not provided.',
 )
 async def create_one(item: TenantCreate) -> TenantGet:
-    tenant = await Tenant(**item.dict()).create()
+    tenant: Tenant = await Tenant(**item.dict()).create()
     await tenant.provision()
     return TenantGet.from_orm(tenant)
