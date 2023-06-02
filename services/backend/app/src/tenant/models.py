@@ -18,7 +18,7 @@ def generate_schema_name() -> str:
     return f"tenant_{str(uuid.uuid4()).replace('-','_')}"
 
 
-class Tenant(IdentifierMixin, SharedModelMixin, AppModel):
+class Tenant(AppModel, IdentifierMixin, SharedModelMixin):
     schema_name = Column(String, default=generate_schema_name)
 
     async def execute_query(

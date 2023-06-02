@@ -41,7 +41,7 @@ class DatabaseService:
                 logger.warning('Database created.')
                 logger.warning('Creating default schemas...')
                 cls.create_db_schema(SHARED_SCHEMA_NAME)
-                # cls.create_db_schema(TENANT_SCHEMA_NAME)
+                cls.create_db_schema(TENANT_SCHEMA_NAME)
                 logger.warning('Default schemas created.')
         else:
             logger.info(f"Database '{DATABASE_HOST}/{DATABASE_NAME}' already exists. Nothing to do.")

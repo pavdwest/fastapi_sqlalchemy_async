@@ -42,7 +42,7 @@ class TenantModelMixin:
     __table_args__ = { 'schema': TENANT_SCHEMA_NAME }
 
 
-class AppModel(IdMixin, TimestampsMixin, DeclarativeBase):
+class AppModel(DeclarativeBase, IdMixin, TimestampsMixin):
     @declared_attr
     @lru_cache(maxsize=1)
     def __tablename__(cls):
@@ -61,7 +61,8 @@ class AppModel(IdMixin, TimestampsMixin, DeclarativeBase):
     @classmethod
     async def init_orm(cls):
         # await cls.drop_tables()
-        await cls.create_tables()
+        # await cls.create_tables()
+        pass
 
     @classmethod
     async def create_tables(cls, schema_name: str = SHARED_SCHEMA_NAME):
