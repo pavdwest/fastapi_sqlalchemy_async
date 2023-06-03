@@ -45,3 +45,11 @@ TODO
 ## Set up Alembic from scratch:
 
 ```docker compose exec fastapi_pg_sqlalchemy-backend-1 alembic init -t async src/migrations```
+
+## PGAdmin4
+
+You can access PGAdmin4 at ```http://localhost:5050```.
+
+See the `pgadmin` service in the ```docker-componse.yml``` file for credentials.
+
+Once you've logged into PGAdmin add the db server using the details as per `db` service in the ```docker-componse.yml```. **_Tip: Host name/address is `db` (name of the service) by default._**
