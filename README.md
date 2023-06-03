@@ -12,11 +12,36 @@ A dockerised multi-tenant (by schema) stack containing the following components:
 
 TODO
 
-1. Clone repo
-2. cd
-3. pip install for local dev
-4. docker compose up --build
-5. Set up pgAdmin4
-6. Run once docker compose up --build attach backend
-7. Check localhost:8000/docs
-8. Init alembic: `docker compose exec <fastapi_pg_sqlalchemy-backend-1> alembic init -t async src/migrations`
+1. Clone repo:
+
+    ```git clone git@github.com:pavdwest/fastapi_pg_sqlalchemy.git```
+
+2. Enter directory:
+
+    ```cd fastapi_pg_sqlalchemy```
+
+3. Create virtual environment:
+
+    ```python -m venv services/backend/app/.ignore/venv```
+
+4. Install dependencies for local development/intellisense:
+
+    ```pip install -r services/backend/app/requirements/base.txt```
+
+5. Run stack (we attach only to the backend as we don't want to listen to PGAdmin4 spam):
+
+    ```docker compose up --build --attach backend```
+
+6. Everything's running:
+
+    ```http://127.0.0.1:8000/docs```
+
+7. Run migrations with Alembic:
+
+     ```docker compose exec fastapi_pg_sqlalchemy-backend-1 alembic upgrade head```
+
+# Notes
+
+## Set up Alembic from scratch:
+
+```docker compose exec fastapi_pg_sqlalchemy-backend-1 alembic init -t async src/migrations```
