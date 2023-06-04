@@ -77,6 +77,22 @@ class DatabaseService:
             else:
                 logger.info(f"Schema '{schema_name}' already exists.")
 
+        sync_engine.dispose()
+
+
+    @classmethod
+    def clone_db_schema(source_schema_name: str, target_schema_name: str) -> None:
+        sync_engine = create_engine(DATABASE_URL_SYNC)
+        with sync_engine.begin() as conn:
+            # logger.warning(f"Cloning schema '{source_schema_name}' to '{target_schema_name}...")
+            # conn.execute()
+
+            # # res = cursor.execute(f"create table if not exists {target_schema_name}.{table_name} (like {source_schema_name}.{table_name} including all)")
+            # TODO
+            pass
+
+        sync_engine.dispose()
+
     @classmethod
     def init_db(cls):
         cls.create_db_if_not_exists()

@@ -65,21 +65,7 @@ def do_run_migrations(connection: Connection) -> None:
 
     with context.begin_transaction():
         # Shared schema
-        print('Running migrations for shared schema...')
-        connection.execution_options(
-            schema_translate_map={
-                'tenant': None
-            }
-        )
-        context.run_migrations()
-
-        # Tenant dummy schema
-        print('Running migrations for tenant dummy schema...')
-        connection.execution_options(
-            schema_translate_map={
-                'shared': None
-            }
-        )
+        print('Running migrations for shared & tenant dummy schema...')
         context.run_migrations()
 
         # Individual tenant schemas
@@ -91,12 +77,13 @@ def do_run_migrations(connection: Connection) -> None:
                 print(f"Running migrations for specific tenant: {tenant['schema_name']}")
                 connection.execution_options(
                     schema_translate_map={
-                        'tenant': tenant['schema_name']
+                        'shared': None,
+                        'tenant': tenant['schema_name'],
                     }
                 )
                 context.run_migrations()
         else:
-            print('Tenant table does not exist yet')
+            print('Tenant table does not exist yet. Ignoring tenant-specific schema migrations.')
 
 
 async def run_async_migrations() -> None:
