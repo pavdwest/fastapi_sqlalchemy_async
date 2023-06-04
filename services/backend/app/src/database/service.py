@@ -1,6 +1,11 @@
 from typing import Any, AsyncGenerator
 
-from sqlalchemy import create_engine, Select, Insert, Update, Delete, Result, ScalarResult
+from sqlalchemy import (
+    create_engine,
+    Select, Insert, Update, Delete,
+    Result, ScalarResult,
+    text
+)
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngine, async_scoped_session, async_sessionmaker, async_session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils import database_exists, create_database, drop_database
@@ -81,16 +86,21 @@ class DatabaseService:
 
 
     @classmethod
-    def clone_db_schema(source_schema_name: str, target_schema_name: str) -> None:
+    def clone_db_schema(cls, source_schema_name: str, target_schema_name: str) -> None:
         sync_engine = create_engine(DATABASE_URL_SYNC)
         with sync_engine.begin() as conn:
-            # logger.warning(f"Cloning schema '{source_schema_name}' to '{target_schema_name}...")
-            # conn.execute()
+            logger.warning(f"Cloning schema '{source_schema_name}' to '{target_schema_name}...")
 
-            # # res = cursor.execute(f"create table if not exists {target_schema_name}.{table_name} (like {source_schema_name}.{table_name} including all)")
-            # TODO
-            pass
+            # Get all tables in schema
+            sql_schema_tables = "select * from information_schema.tables where table_schema = 'tenant'"
+            schema_tables = [r['table_name'] for r in conn.execute(text(sql_schema_tables)).mappings().all()]
 
+            for table_name in schema_tables:
+                logger.warning(f"Cloning {source_schema_name}.{table_name} to {target_schema_name}.{table_name}...")
+                sql_clone = f"create table if not exists {target_schema_name}.{table_name} (like {source_schema_name}.{table_name} including all)"
+                clone_res = conn.execute(text(sql_clone))
+
+        logger.warning("Schema cloned.")
         sync_engine.dispose()
 
     @classmethod
