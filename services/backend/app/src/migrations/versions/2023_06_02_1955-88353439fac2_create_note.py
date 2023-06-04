@@ -1,7 +1,7 @@
 """create_note
 
 Revision ID: 88353439fac2
-Revises: dd15c286fd3b
+Revises: 8b97a0c567f2
 Create Date: 2023-06-02 19:55:50.871220
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '88353439fac2'
-down_revision = 'dd15c286fd3b'
+down_revision = '8b97a0c567f2'
 branch_labels = None
 depends_on = None
 

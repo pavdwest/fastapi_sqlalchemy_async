@@ -30,20 +30,3 @@ async def home(response: Response) -> Dict:
     return {
         'message': 'Hello boils and ghouls'
     }
-
-
-@router.get(
-    '/sandbox',
-    status_code=status.HTTP_200_OK,
-    summary='Returns 200 if service is up and running',
-    description='Endpoint description. Will use the docstring if not provided.',
-)
-async def sandbox():
-
-    from src.database.service import db
-    db.clone_db_schema(source_schema_name='tenant', target_schema_name='xantghar')
-
-
-    return {
-        'msg': 'asdsad'
-    }

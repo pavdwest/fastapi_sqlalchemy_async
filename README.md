@@ -53,3 +53,23 @@ You can access PGAdmin4 at ```http://localhost:5050```.
 See the `pgadmin` service in the ```docker-componse.yml``` file for credentials.
 
 Once you've logged into PGAdmin add the db server using the details as per `db` service in the ```docker-componse.yml```. **_Tip: Host name/address is `db` (name of the service) by default._**
+
+## Adding a New Model
+
+1. Add folder to ```services/backend/app/src/modules```
+
+    `.../models/my_model/routes.py`         for the endpoints
+
+    `.../models/my_model/models.py`         for the SQLAlchemy model
+
+    `.../models/my_model/validators.py`     for the Pydantic validators
+
+2. Import models to ```services/backend/app/src/migrations/env.py```
+
+3. Create migration:
+
+    ```docker exec -it fastapi_pg_sqlalchemy-backend-1 alembic revision --autogenerate -m "Add MyModel"```
+
+4. Run migration:
+
+    ```docker exec -it fastapi_pg_sqlalchemy-backend-1 alembic upgrade head"```

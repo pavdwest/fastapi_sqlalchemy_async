@@ -36,6 +36,13 @@ class DatabaseService:
 
     @classmethod
     def create_db_if_not_exists(cls):
+        """
+        Creates a database using the config params.
+        TODO: Parameterise.
+
+        Raises:
+            Exception: _description_
+        """
         if not database_exists(url=DATABASE_URL_SYNC):
             logger.warning(f"Creating database: '{DATABASE_HOST}/{DATABASE_NAME}'...")
             create_database(url=DATABASE_URL_SYNC)
@@ -53,6 +60,12 @@ class DatabaseService:
 
     @classmethod
     def drop_database(cls, database_url: str):
+        """
+        Drops a database - no questions asked. BEWARE!
+
+        Args:
+            database_url (str): A string of the form `postgresql+psycopg2://postgres_user:superSecur3pAs5w0Rd@127.0.0.1:5432/my_app_db`
+        """
         logger.warning("Dropping database: '{DATABASE_HOST}/{DATABASE_NAME}'")
 
         if database_exists(url=database_url):
@@ -84,9 +97,17 @@ class DatabaseService:
 
         sync_engine.dispose()
 
-
     @classmethod
     def clone_db_schema(cls, source_schema_name: str, target_schema_name: str) -> None:
+        """
+        Clones the table definitions from one schema to another.
+        If a table already exists in the target_schema, it will skip it.
+        Does not clone any data. Idempotent.
+
+        Args:
+            source_schema_name (str): Schema to clone
+            target_schema_name (str): Schema to clone into. Must exist already.
+        """
         sync_engine = create_engine(DATABASE_URL_SYNC)
         with sync_engine.begin() as conn:
             logger.warning(f"Cloning schema '{source_schema_name}' to '{target_schema_name}...")
@@ -95,12 +116,25 @@ class DatabaseService:
             sql_schema_tables = "select * from information_schema.tables where table_schema = 'tenant'"
             schema_tables = [r['table_name'] for r in conn.execute(text(sql_schema_tables)).mappings().all()]
 
+            # Clone tables one for one
             for table_name in schema_tables:
                 logger.warning(f"Cloning {source_schema_name}.{table_name} to {target_schema_name}.{table_name}...")
                 sql_clone = f"create table if not exists {target_schema_name}.{table_name} (like {source_schema_name}.{table_name} including all)"
                 clone_res = conn.execute(text(sql_clone))
 
         logger.warning("Schema cloned.")
+        sync_engine.dispose()
+
+    @classmethod
+    def clone_db_table(cls, source_table: str, target_table: str):
+        sync_engine = create_engine(DATABASE_URL_SYNC)
+        with sync_engine.begin() as conn:
+            logger.warning(f"Copying table '{source_table}' to '{target_table}...")
+            sql = f"create table {target_table} as select * from {source_table}"
+            res = conn.execute(text(sql))
+
+        logger.warning("Table copied")
+
         sync_engine.dispose()
 
     @classmethod

@@ -1,5 +1,6 @@
 import asyncio
 from logging.config import fileConfig
+from typing import ContextManager, List
 
 from sqlalchemy import pool, text
 from sqlalchemy.engine import Connection
@@ -60,30 +61,64 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+def get_revision(connection: Connection, schema: str):
+    alembic_table_exists = connection.execute(text(f"select exists (select from pg_tables where schemaname = '{schema}' and tablename = 'alembic_version')")).mappings().all()[0]['exists']
+    revision = None
+    if alembic_table_exists:
+        revision_res = connection.execute(text(f'select version_num from {schema}.alembic_version')).mappings().all()
+        if len(revision_res) > 0:
+            revision = revision_res[0]['version_num']
+    return revision
+
+
+def set_revision(connection: Connection, schema: str, revision: str):
+    connection.execute(text(f"update {schema}.alembic_version set version_num = '{revision}'"))
+
+
+def execute_select(connection: Connection, query: str) -> List:
+    return [r for r in connection.execute(text(query)).mappings().all()]
+
+
+def table_exists(connection: Connection, schema: str, table: str) -> bool:
+    return execute_select(
+        connection=connection,
+        query=f"select exists (select from pg_tables where schemaname = '{schema}' and tablename = '{table}')"
+    )[0]['exists']
+
+
 def do_run_migrations(connection: Connection) -> None:
+    # TODO: Rethink how to deal with failed migrations
     context.configure(connection=connection, target_metadata=target_metadata)
 
-    with context.begin_transaction():
-        # Shared schema
-        print('Running migrations for shared & tenant dummy schema...')
-        context.run_migrations()
+    with context.begin_transaction() as ctx:
+        # Get current version num so we can reset for each tenant
+        public_revision_pre = get_revision(connection=connection, schema='public')
 
-        # Individual tenant schemas
-        res = connection.execute(text("select exists (select from pg_tables where schemaname = 'shared' and tablename = 'tenant')"))
-        if res.mappings().all()[0] == True:
-            res = connection.execute(text('select * from shared.tenant'))
-            tenants = [row for row in res.mappings().all()]
-            for tenant in tenants:
-                print(f"Running migrations for specific tenant: {tenant['schema_name']}")
-                connection.execution_options(
-                    schema_translate_map={
-                        'shared': None,
-                        'tenant': tenant['schema_name'],
-                    }
-                )
-                context.run_migrations()
-        else:
-            print('Tenant table does not exist yet. Ignoring tenant-specific schema migrations.')
+        with context.begin_transaction():
+
+            # Shared schema
+            print('Running migrations for shared & tenant dummy schema...')
+            context.run_migrations()
+
+            # Individual tenant schemas
+            if table_exists(connection=connection, schema='shared', table='tenant'):
+                tenants = execute_select(connection=connection, query='select * from shared.tenant')
+                for tenant in tenants:
+                    tenant_schema_name = tenant['schema_name']
+                    print(f"Running migrations for specific tenant: {tenant_schema_name}")
+                    tenant_revision = get_revision(connection=connection, schema=tenant_schema_name)
+                    if public_revision_pre is not None:
+                        set_revision(connection=connection, schema='public', revision=public_revision_pre)
+
+                    connection.execution_options(
+                        schema_translate_map={
+                            'shared': None,
+                            'tenant': tenant['schema_name'],
+                        }
+                    )
+                    context.run_migrations()
+            else:
+                print('Tenant table does not exist yet. Ignoring tenant-specific schema migrations.')
 
 
 async def run_async_migrations() -> None:

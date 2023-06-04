@@ -1,8 +1,8 @@
 """create_tenant
 
 Revision ID: 8b97a0c567f2
-Revises: 88353439fac2
-Create Date: 2023-06-02 20:00:39.624708
+Revises: dd15c286fd3b
+Create Date: 2023-06-02 18:47:39.624708
 
 """
 from alembic import op
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '8b97a0c567f2'
-down_revision = '88353439fac2'
+down_revision = 'dd15c286fd3b'
 branch_labels = None
 depends_on = None
 
