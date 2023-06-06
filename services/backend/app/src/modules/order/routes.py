@@ -47,6 +47,4 @@ async def create_one(tenant_schema: str, item: CreateModelValidator) -> GetModel
 )
 async def get_all(tenant_schema: str) -> List[GetModelValidator]:
     res = await Model.fetch_all(schema_name = tenant_schema)
-    print(res[0].__dict__)
-    print(res[0].guid)
     return [GetModelValidator.from_orm(i) for i in res]
