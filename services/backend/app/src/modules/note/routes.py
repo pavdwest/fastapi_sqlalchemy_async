@@ -2,8 +2,9 @@ from typing import List, Dict
 
 from fastapi import APIRouter, status
 from sqlalchemy.future import select
-from src.database.service import db
+from inflection import pluralize
 
+from src.database.service import db
 from src.modules.note.models import Note
 from src.modules.note.validators import NoteCreate, NoteGet
 
@@ -31,7 +32,7 @@ async def create_one(tenant_schema: str, item: NoteCreate) -> NoteGet:
 @router.get(
     '/get_all',
     status_code=status.HTTP_200_OK,
-    summary=f"Create one {model_class.__name__} in the database.",
+    summary=f"Get all {pluralize(model_class.__name__)} from the database.",
     description='Endpoint description. Will use the docstring if not provided.',
 )
 async def get_all(tenant_schema: str) -> List[NoteGet]:

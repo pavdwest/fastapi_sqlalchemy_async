@@ -30,6 +30,10 @@ class IdentifierMixin:
     identifier =  Column(String, unique=True)
 
 
+class DescriptionMixin:
+    description =  Column(String, unique=False)
+
+
 class GUIDMixin:
     guid = Column(UUID(as_uuid=True), default=uuid.uuid4)
 

@@ -11,8 +11,9 @@ from alembic import context
 from src.config import DATABASE_URL_ASYNC, SHARED_SCHEMA_NAME, TENANT_SCHEMA_NAME
 from src.models import AppModel
 from src.modules.book.models import Book
-from src.modules.note.models import Note
 from src.tenant.models import Tenant
+from src.modules.note.models import Note
+from src.modules.product.models import Product
 
 
 # this is the Alembic Config object, which provides
@@ -101,8 +102,8 @@ def do_run_migrations(connection: Connection) -> None:
             context.run_migrations()
 
             # Individual tenant schemas
-            if table_exists(connection=connection, schema='shared', table='tenant'):
-                tenants = execute_select(connection=connection, query='select * from shared.tenant')
+            if table_exists(connection=connection, schema=SHARED_SCHEMA_NAME, table='tenant'):
+                tenants = execute_select(connection=connection, query=f"select * from {SHARED_SCHEMA_NAME}.tenant")
                 for tenant in tenants:
                     tenant_schema_name = tenant['schema_name']
                     print(f"Running migrations for specific tenant: {tenant_schema_name}")
@@ -112,8 +113,8 @@ def do_run_migrations(connection: Connection) -> None:
 
                     connection.execution_options(
                         schema_translate_map={
-                            'shared': None,
-                            'tenant': tenant['schema_name'],
+                            SHARED_SCHEMA_NAME: None,
+                            TENANT_SCHEMA_NAME: tenant['schema_name'],
                         }
                     )
                     context.run_migrations()
