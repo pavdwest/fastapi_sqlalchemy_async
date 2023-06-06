@@ -7,8 +7,10 @@ from src.models import AppModel, TenantModelMixin, IdentifierMixin, DescriptionM
 
 
 class Product(AppModel, TenantModelMixin, IdentifierMixin, DescriptionMixin):
+    release_year = Column(Integer, nullable=False)
+
+    # Relations
     orders: Mapped[List['Order']] = relationship(
         back_populates='product',
         cascade='all, delete-orphan',
     )
-    release_year = Column(Integer, nullable=False)
