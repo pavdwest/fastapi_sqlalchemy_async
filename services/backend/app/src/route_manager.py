@@ -6,6 +6,7 @@ from src.modules.book.routes import router as book_router
 from src.modules.note.routes import router as note_router
 from src.modules.sandbox.routes import router as sandbox_router
 from src.modules.product.routes import router as product_router
+from src.modules.order.routes import router as order_router
 
 
 def register_app(app: FastAPI):
@@ -15,3 +16,4 @@ def register_app(app: FastAPI):
     app.include_router(note_router)
     app.include_router(sandbox_router)
     app.include_router(product_router)
+    app.include_router(order_router)

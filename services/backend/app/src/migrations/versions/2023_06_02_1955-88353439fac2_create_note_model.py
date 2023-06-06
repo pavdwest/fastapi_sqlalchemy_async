@@ -1,4 +1,4 @@
-"""create_note
+"""Create Note Model
 
 Revision ID: 88353439fac2
 Revises: 8b97a0c567f2
@@ -22,9 +22,9 @@ def upgrade() -> None:
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('author', sa.String(), nullable=False),
     sa.Column('release_year', sa.Integer(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.BigInteger(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     schema='tenant'
     )

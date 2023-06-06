@@ -12,7 +12,7 @@ class ProductCreate(BaseModel):
 
         schema_extra = {
             'example': {
-                'identifier': 'Rectro Encabulator',
+                'identifier': 'Retro Encabulator',
                 'description': 'An encabulator that is retro',
                 'release_year': 2005,
             }
@@ -32,7 +32,7 @@ class ProductGet(BaseModel):
         schema_extra = {
             'example': {
                 'id': 27,
-                'identifier': 'Rectro Encabulator',
+                'identifier': 'Retro Encabulator',
                 'description': 'An encabulator that is retro',
                 'release_year': 2005,
             }

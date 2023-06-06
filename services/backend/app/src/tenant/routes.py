@@ -37,4 +37,5 @@ async def create_one(item: TenantCreate) -> TenantGet:
 )
 async def get_all() -> List[TenantGet]:
     items = await Tenant.fetch_all()
+    print(items)
     return [TenantGet.from_orm(item) for item in items]

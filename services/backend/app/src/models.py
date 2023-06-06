@@ -4,13 +4,16 @@ from functools import lru_cache
 from typing import List
 from datetime import datetime
 
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.future import select
 from inflection import titleize, pluralize, underscore
-from sqlalchemy_utils import get_class_by_table
-from sqlalchemy import Column, Integer, DateTime, String
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    Mapped, mapped_column,
+)
+from sqlalchemy.future import select
+from sqlalchemy import BigInteger
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy_utils import get_class_by_table
 
 from src.logging.service import logger
 from src.config import SHARED_SCHEMA_NAME, TENANT_SCHEMA_NAME
@@ -18,24 +21,28 @@ from src.database.service import db
 
 
 class IdMixin:
-    id =  Column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+
+
+class TimestampMixin:
+    timestamp: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
 
 class TimestampsMixin:
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class IdentifierMixin:
-    identifier =  Column(String, unique=True)
+    identifier: Mapped[str] =  mapped_column(unique=True)
 
 
 class DescriptionMixin:
-    description =  Column(String, unique=False)
+    description: Mapped[str] =  mapped_column(unique=False)
 
 
 class GUIDMixin:
-    guid = Column(UUID(as_uuid=True), default=uuid.uuid4)
+    guid: Mapped[uuid.uuid4] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4, unique=True)
 
 
 class SharedModelMixin:
