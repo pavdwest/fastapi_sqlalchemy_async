@@ -17,6 +17,9 @@ router = APIRouter(
 )
 
 
+# TODO: TenantSchema should be taken out of the pydantic models and
+# should instead be dependency injected instead
+
 @router.post(
     f"/create_one",
     status_code=status.HTTP_200_OK,
@@ -24,8 +27,9 @@ router = APIRouter(
     description='Endpoint description. Will use the docstring if not provided.',
 )
 async def create_one(item: NoteCreate) -> NoteGet:
-    schema_name = 'tenant_386f8f55_8bcb_4151_8dce_035fa7fea31d'
-    db_item = await Note(**item.dict()).create(schema_name)
+
+    schema_name = item.tenant_schema
+    db_item = await Note(**item.dict(exclude={'tenant_schema'})).create(schema_name)
     return NoteGet.from_orm(db_item)
 
 
@@ -35,32 +39,6 @@ async def create_one(item: NoteCreate) -> NoteGet:
     summary='Returns 200 if service is up and running',
     description='Endpoint description. Will use the docstring if not provided.',
 )
-async def get_all() -> List[NoteGet]:
-    # Get tenant
-    from src.tenant.models import Tenant
-    tenant: Tenant = (await db.execute_query(select(Tenant).limit(1))).scalar_one()
-
-    q = select(Note)
-    res = await tenant.execute_query(q)
-    return [NoteGet.from_orm(i) for i in res.scalars()]
-
-    # # Get tenant's
-    # q = select(Note)
-    # res = await db.execute_query(q, schema_name='tenant_386f8f55_8bcb_4151_8dce_035fa7fea31d')
-    # return [NoteGet.from_orm(i) for i in res.scalars()]
-    # q = select(Note).where(Note.id > 0)
-    # res = await tenant.execute_query(query=q)
-    # return [NoteGet.from_orm(i) for i in res.scalars()]
-
-    # schema_name = 'tenant_386f8f55_8bcb_4151_8dce_035fa7fea31d'
-    # q = select(Note).where(Note.id > 3)
-    # res = await db.execute_query(
-    #     query=q,
-    #     schema_name=schema_name
-    # )
-    # return [NoteGet.from_orm(i) for i in res.scalars()]
-
-
-    # schema_name = 'tenant_386f8f55_8bcb_4151_8dce_035fa7fea31d'
-    # res = await Note.fetch_all(schema_name)
-    # return [NoteGet.from_orm(i) for i in res]
+async def get_all(tenant_schema: str) -> List[NoteGet]:
+    res = await Note.fetch_all(schema_name = tenant_schema)
+    return [NoteGet.from_orm(i) for i in res]

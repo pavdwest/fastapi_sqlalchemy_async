@@ -26,3 +26,15 @@ async def create_one(item: TenantCreate) -> TenantGet:
     tenant: Tenant = await Tenant(**item.dict()).create()
     await tenant.provision()
     return TenantGet.from_orm(tenant)
+
+
+@router.get(
+    f"/get_all",
+    response_model=List[TenantGet],
+    status_code=status.HTTP_200_OK,
+    summary=f"Get all instances of {model_class.__name__} stored in the database.",
+    description='Endpoint description. Will use the docstring if not provided.',
+)
+async def get_all() -> List[TenantGet]:
+    items = await Tenant.fetch_all()
+    return [TenantGet.from_orm(item) for item in items]
