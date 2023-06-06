@@ -17,26 +17,21 @@ router = APIRouter(
 )
 
 
-# TODO: TenantSchema should be taken out of the pydantic models and
-# should instead be dependency injected instead
-
 @router.post(
     f"/create_one",
     status_code=status.HTTP_200_OK,
     summary=f"Create one {model_class.__name__} in the database.",
     description='Endpoint description. Will use the docstring if not provided.',
 )
-async def create_one(item: NoteCreate) -> NoteGet:
-
-    schema_name = item.tenant_schema
-    db_item = await Note(**item.dict(exclude={'tenant_schema'})).create(schema_name)
+async def create_one(tenant_schema: str, item: NoteCreate) -> NoteGet:
+    db_item = await Note(**item.dict()).create(tenant_schema)
     return NoteGet.from_orm(db_item)
 
 
 @router.get(
     '/get_all',
     status_code=status.HTTP_200_OK,
-    summary='Returns 200 if service is up and running',
+    summary=f"Create one {model_class.__name__} in the database.",
     description='Endpoint description. Will use the docstring if not provided.',
 )
 async def get_all(tenant_schema: str) -> List[NoteGet]:
