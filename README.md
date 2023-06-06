@@ -20,23 +20,27 @@ TODO
 
     ```cd fastapi_pg_sqlalchemy```
 
-3. Create virtual environment:
+3. Create & activate virtual environment:
 
-    ```python -m venv services/backend/app/.ignore/venv```
+    ```python -m venv services/backend/app/.ignore/venv && source services/backend/app/.ignore/venv/bin/activate```
 
 4. Install dependencies for local development/intellisense:
 
     ```pip install -r services/backend/app/requirements/base.txt```
 
-5. Run stack (we attach only to the backend as we don't want to listen to PGAdmin4 spam):
+5. Add .env file:
+
+    ```cp services/backend/app/src/.env.example services/backend/app/src/.env```
+
+6. Run stack (we attach only to the backend as we don't want to listen to PGAdmin4 spam):
 
     ```docker compose up --build --attach backend```
 
-6. Everything's running:
+7. Everything's running:
 
     ```http://127.0.0.1:8000/docs```
 
-7. Run migrations with Alembic:
+8. Run migrations with Alembic:
 
      ```docker compose exec fastapi_pg_sqlalchemy-backend-1 alembic upgrade head```
 
