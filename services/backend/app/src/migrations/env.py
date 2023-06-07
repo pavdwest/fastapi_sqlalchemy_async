@@ -1,6 +1,6 @@
 import asyncio
 from logging.config import fileConfig
-from typing import ContextManager, List
+from typing import List
 
 from sqlalchemy import pool, text
 from sqlalchemy.engine import Connection
@@ -97,7 +97,6 @@ def do_run_migrations(connection: Connection) -> None:
         public_revision_pre = get_revision(connection=connection, schema='public')
 
         with context.begin_transaction():
-
             # Shared schema
             print('Running migrations for shared & tenant dummy schema...')
             context.run_migrations()
@@ -105,9 +104,9 @@ def do_run_migrations(connection: Connection) -> None:
             # Individual tenant schemas
             if table_exists(connection=connection, schema=SHARED_SCHEMA_NAME, table='tenant'):
                 tenants = execute_select(connection=connection, query=f"select * from {SHARED_SCHEMA_NAME}.tenant")
-                for tenant in tenants:
+                for i, tenant in enumerate(tenants):
                     tenant_schema_name = tenant['schema_name']
-                    print(f"Running migrations for specific tenant: {tenant_schema_name}")
+                    print(f"Running migrations for specific tenant ({i + 1} of {len(tenants)}): '{tenant_schema_name}'")
                     tenant_revision = get_revision(connection=connection, schema=tenant_schema_name)
                     if public_revision_pre is not None:
                         set_revision(connection=connection, schema='public', revision=public_revision_pre)
