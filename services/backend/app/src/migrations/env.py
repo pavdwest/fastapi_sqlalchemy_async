@@ -101,7 +101,7 @@ def do_run_migrations(connection: Connection) -> None:
         print(f"Current revision is '{public_revision_pre}'.")
 
         # Shared + Tenant model schema
-        print('Running migrations for shared & tenant dummy schema...')
+        print('Running migrations for shared & tenant model schema...')
         context.run_migrations()
 
         public_revision_post = get_revision(connection=connection, schema='public')
@@ -142,7 +142,7 @@ def do_run_migrations(connection: Connection) -> None:
 
         print('=====================================')
         public_revision_post_tenants = get_revision(connection=connection, schema='public')
-        print(f"Revision after Tenant-specific migrations: '{public_revision_post_tenants}'")
+        print(f"Final revision: '{public_revision_post_tenants}'")
         result = public_revision_post == public_revision_post_tenants
         print(f"Migration success?: {result}")
         print('=====================================')
