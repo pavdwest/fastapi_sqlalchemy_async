@@ -10,7 +10,7 @@ from sqlalchemy.orm import (
     Mapped, mapped_column,
 )
 from sqlalchemy.future import select
-from sqlalchemy import BigInteger
+from sqlalchemy import BigInteger, Column, Identity
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy_utils import get_class_by_table
@@ -21,8 +21,7 @@ from src.database.service import db
 
 
 class IdMixin:
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-
+    id: Mapped[int] = mapped_column(BigInteger, Identity(), primary_key=True)
 
 class TimestampMixin:
     timestamp: Mapped[datetime] = mapped_column(default=datetime.utcnow)
