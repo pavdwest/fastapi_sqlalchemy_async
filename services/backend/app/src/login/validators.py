@@ -1,25 +1,22 @@
 from datetime import datetime
+import uuid
 
 from pydantic import BaseModel
 
 from src.validators import (
     AppModelGetValidator,
     AppModelCreateValidator,
-    TimestampValidator,
-    DescriptionValidator,
-    GUIDValidator,
 )
 
 
 class LoginCommon(BaseModel):
     email:         str
-    password_hash: str
-    verified:      bool
-    name:          str
-    surname:       str
+    name:          str = None
+    surname:       str = None
 
 
-class LoginCreate(AppModelCreateValidator, TimestampValidator, DescriptionValidator, LoginCommon):
+class LoginCreate(AppModelCreateValidator, LoginCommon):
+    password: str
     class Config:
         orm_mode = True
         allow_population_by_field_name = True
@@ -27,14 +24,16 @@ class LoginCreate(AppModelCreateValidator, TimestampValidator, DescriptionValida
         schema_extra = {
             'example': {
                 'email': 'joe.doe@incrediblecorruption.com',
-                'verified': True,
+                'password': '5up3rS3<uR3',
                 'name': 'Joe',
                 'surname': 'Doe',
             }
         }
 
 
-class LoginGet(AppModelGetValidator, TimestampValidator, DescriptionValidator, GUIDValidator, LoginCommon):
+class LoginGet(AppModelGetValidator, LoginCommon):
+    # verification_token: uuid.UUID     # Send via email instead
+    verified: bool
     class Config:
         orm_mode = True
         allow_population_by_field_name = True

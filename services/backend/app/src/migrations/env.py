@@ -15,6 +15,7 @@ from src.tenant.models import Tenant
 from src.modules.note.models import Note
 from src.modules.product.models import Product
 from src.modules.order.models import Order
+from src.login.models import Login
 
 
 # this is the Alembic Config object, which provides

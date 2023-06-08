@@ -3,14 +3,13 @@ from datetime import datetime, timedelta
 from typing import Union, Any, Dict
 from uuid import uuid4, UUID
 
-from fastapi import Depends, HTTPException, status
+# from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
-from pydantic import ValidationError
+# from pydantic import ValidationError
 
 from src.config import JWT_SECRET_KEY, ACCESS_TOKEN_EXPIRE_MINUTES
 from src.auth.validators import TokenPayload, TokenCreate
-from src.login.models import Login
 
 
 ALGORITHM = 'HS256'
@@ -25,6 +24,7 @@ def bearer_token_header(token: str) -> Dict:
     }
 
 def get_hashed_password(password: str) -> str:
+    # TODO: Why is this so slow?
     return password_context.hash(password)
 
 
@@ -77,8 +77,8 @@ def create_access_token(subject: Union[str, Any], expire_minutes: float = None) 
 
 
 reuseable_oauth = OAuth2PasswordBearer(
-    tokenUrl="/get_access_token",
-    scheme_name="JWT"
+    tokenUrl='login/get_access_token',
+    scheme_name='JWT'
 )
 
 

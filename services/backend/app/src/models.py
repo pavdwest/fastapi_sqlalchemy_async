@@ -9,8 +9,8 @@ from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped, mapped_column,
 )
-from sqlalchemy.future import select
-from sqlalchemy import BigInteger, Column, Identity
+from sqlalchemy import select, update
+from sqlalchemy import BigInteger, Identity
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy_utils import get_class_by_table
@@ -104,6 +104,13 @@ class AppModel(DeclarativeBase, IdMixin, TimestampsMixin):
         Returns:
             AppModel: Updated self
         """
+        session = await db.get_session()
+        async with session.begin() as session_ctx:
+            await db.set_schema_context(session_ctx, schema_name)
+            session_ctx.add(self)
+            return self
+
+    async def save(self, schema_name: str = SHARED_SCHEMA_NAME) -> AppModel:
         session = await db.get_session()
         async with session.begin() as session_ctx:
             await db.set_schema_context(session_ctx, schema_name)
