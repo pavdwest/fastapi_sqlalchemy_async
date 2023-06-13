@@ -2,9 +2,9 @@ from typing import Any
 import uuid
 
 from sqlalchemy import Column, String, Select, Insert, Update, Delete, Result
-from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine, async_scoped_session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.config import TENANT_SCHEMA_NAME, SHARED_SCHEMA_NAME
+from src.config import TENANT_SCHEMA_NAME
 from src.database.service import db
 from src.models import AppModel, IdentifierMixin, SharedModelMixin
 
@@ -43,4 +43,3 @@ class Tenant(AppModel, IdentifierMixin, SharedModelMixin):
 
             # Create schema tables
             db.clone_db_schema(source_schema_name=TENANT_SCHEMA_NAME, target_schema_name=self.schema_name)
-            # db.clone_db_table(source_table=f"{SHARED_SCHEMA_NAME}.alembic_version", target_table=f"{SHARED_SCHEMA_NAME}.alembic_version")

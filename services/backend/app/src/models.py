@@ -9,7 +9,7 @@ from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped, mapped_column,
 )
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy import BigInteger, Identity
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.dialects.postgresql import UUID

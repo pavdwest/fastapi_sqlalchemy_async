@@ -1,13 +1,12 @@
-from typing import Any, AsyncGenerator
+from typing import Any
 
 from sqlalchemy import (
     create_engine,
     Select, Insert, Update, Delete,
-    Result, ScalarResult,
+    Result,
     text
 )
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngine, async_scoped_session, async_sessionmaker, async_session
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngine, async_sessionmaker
 from sqlalchemy_utils import database_exists, create_database, drop_database
 from sqlalchemy.schema import CreateSchema
 

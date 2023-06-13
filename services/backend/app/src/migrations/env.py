@@ -109,6 +109,7 @@ def do_run_migrations(connection: Connection) -> None:
         print(f"{SHARED_SCHEMA_NAME} and {TENANT_SCHEMA_NAME} migrated to revision {public_revision_post}.")
 
         # Getting tenants
+        # TODO: Parallellise Migrations
         if table_exists(connection=connection, schema=SHARED_SCHEMA_NAME, table='tenant'):
             tenants = execute_select(connection=connection, query=f"select * from {SHARED_SCHEMA_NAME}.tenant")
             if len(tenants) > 0:
@@ -117,6 +118,7 @@ def do_run_migrations(connection: Connection) -> None:
                 print(f"Migrating {len(tenants)} tenant schemas...")
                 print('=====================================')
                 for i, tenant in enumerate(tenants):
+                    junk_schema_name = 'junk'
                     tenant_schema_name = tenant['schema_name']
                     print('-------------------------------------')
                     print(f"Running migrations for specific tenant ({i + 1} of {len(tenants)}): '{tenant_schema_name}'")
@@ -128,16 +130,16 @@ def do_run_migrations(connection: Connection) -> None:
                     # to map the SHARED_SCHEMA_NAME into and we just drop it again after.
                     connection.execution_options(
                         schema_translate_map={
-                            SHARED_SCHEMA_NAME: 'junk',
+                            SHARED_SCHEMA_NAME: junk_schema_name,
                             TENANT_SCHEMA_NAME: tenant_schema_name,
                         }
                     )
                     print('Creating junk schema...')
-                    connection.execute(text('create schema if not exists junk'))
+                    connection.execute(text(f"create schema if not exists '{junk_schema_name}'"))
                     print('Running actual migrations...')
                     context.run_migrations()
                     print('Deleting junk schema...')
-                    connection.execute(text('drop schema if exists junk cascade'))
+                    connection.execute(text(f"drop schema if exists '{junk_schema_name}' cascade"))
                     post_rev = get_revision(connection=connection, schema='public')
                     print(f"Tenant migrated to revision '{post_rev}'.")
 
