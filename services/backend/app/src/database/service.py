@@ -131,9 +131,7 @@ class DatabaseService:
             logger.warning(f"Copying table '{source_table}' to '{target_table}...")
             sql = f"create table {target_table} as select * from {source_table}"
             res = conn.execute(text(sql))
-
         logger.warning("Table copied")
-
         sync_engine.dispose()
 
     @classmethod

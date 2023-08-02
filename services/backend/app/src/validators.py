@@ -1,6 +1,6 @@
 from typing import Union
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 import uuid
 
@@ -31,7 +31,11 @@ class GUIDValidator(BaseModel):
 
 
 class AppModelGetValidator(IdValidator, TimestampsValidator):
-    pass
+    class Config:
+        from_attributes = True
+        populate_by_name = True
 
 class AppModelCreateValidator(BaseModel):
-    pass
+    class Config:
+        from_attributes = True
+        populate_by_name = True

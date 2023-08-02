@@ -7,10 +7,10 @@ class ProductCreate(BaseModel):
     release_year: int
 
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
 
-        schema_extra = {
+        json_schema_extra = {
             'example': {
                 'identifier': 'Retro Encabulator',
                 'description': 'An encabulator that is retro',
@@ -26,10 +26,10 @@ class ProductGet(BaseModel):
     release_year: int
 
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
 
-        schema_extra = {
+        json_schema_extra = {
             'example': {
                 'id': 27,
                 'identifier': 'Retro Encabulator',

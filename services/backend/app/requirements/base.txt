@@ -1,16 +1,29 @@
-fastapi==0.95.2
-uvicorn[standard]==0.22.0
-asyncpg==0.27.0
-psycopg2-binary==2.9.6
-sqlalchemy[asyncio]==2.0.15
-sqlalchemy_utils==0.41.1
-inflection==0.5.1
-pydantic==1.10.8
-pytest==7.3.1
-httpx==0.24.1
-asgi-lifespan==2.1.0
-alembic==1.11.1
-passlib[bcrypt]==1.7.4
-python-jose[cryptography]==3.3.0
-python-dotenv==1.0.0
-python-multipart==0.0.6
+# fastapi[all]==0.100.0
+# asyncpg==0.28.0
+# psycopg2-binary==2.9.6
+# sqlalchemy[asyncio]==2.0.18
+# sqlalchemy_utils==0.41.1
+# inflection==0.5.1
+# pytest==7.4.0
+# httpx==0.24.1
+# asgi-lifespan==2.1.0
+# alembic==1.11.1
+# passlib[bcrypt]==1.7.4
+# python-jose[cryptography]==3.3.0
+# python-dotenv==1.0.0
+# python-multipart==0.0.6
+
+fastapi[all]
+asyncpg
+psycopg2-binary
+sqlalchemy[asyncio]
+sqlalchemy_utils
+inflection
+pytest
+httpx
+asgi-lifespan
+alembic
+passlib[bcrypt]
+python-jose[cryptography]
+python-dotenv
+python-multipart

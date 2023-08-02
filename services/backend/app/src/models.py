@@ -94,7 +94,7 @@ class AppModel(DeclarativeBase, IdMixin, TimestampsMixin):
             await conn.run_sync(cls.metadata.drop_all)
             logger.warning('Tables dropped.')
 
-    async def create(self, schema_name: str = SHARED_SCHEMA_NAME) -> AppModel:
+    async def save(self, schema_name: str = SHARED_SCHEMA_NAME) -> AppModel:
         """
         Persists this instance to the database.
 
@@ -110,13 +110,6 @@ class AppModel(DeclarativeBase, IdMixin, TimestampsMixin):
             session_ctx.add(self)
             return self
 
-    async def save(self, schema_name: str = SHARED_SCHEMA_NAME) -> AppModel:
-        session = await db.get_session()
-        async with session.begin() as session_ctx:
-            await db.set_schema_context(session_ctx, schema_name)
-            session_ctx.add(self)
-            return self
-
     @classmethod
     async def fetch_all(cls, schema_name: str = SHARED_SCHEMA_NAME) -> List[AppModel]:
         """
@@ -126,7 +119,7 @@ class AppModel(DeclarativeBase, IdMixin, TimestampsMixin):
             schema_name (str, optional): Defaults to SHARED_SCHEMA_NAME.
 
         Returns:
-            List[AppModel]: _description_
+            List[AppModel]: List of items retrieved from db.
         """
         session = await db.get_session()
         async with session.begin() as session_ctx:
@@ -134,3 +127,21 @@ class AppModel(DeclarativeBase, IdMixin, TimestampsMixin):
             q = select(cls.get_model_class())
             res = await session_ctx.execute(q)
             return [i for i in res.scalars()]
+
+    @classmethod
+    async def get(cls, id: int, schema_name: str = SHARED_SCHEMA_NAME) -> AppModel:
+        """
+        Get a record by id
+
+        Args:
+            schema_name (str, optional): Defaults to SHARED_SCHEMA_NAME.
+
+        Returns:
+            AppModel: Item retrieved from db.
+        """
+        session = await db.get_session()
+        async with session.begin() as session_ctx:
+            await db.set_schema_context(session_ctx, schema_name)
+            q = select(cls.get_model_class()).where(id == id)
+            res = await session_ctx.execute(q)
+            return res.scalars().first()

@@ -18,10 +18,10 @@ class LoginCommon(BaseModel):
 class LoginCreate(AppModelCreateValidator, LoginCommon):
     password: str
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
 
-        schema_extra = {
+        json_schema_extra = {
             'example': {
                 'email': 'joe.doe@incrediblecorruption.com',
                 'password': '5up3rS3<uR3',
@@ -35,10 +35,10 @@ class LoginGet(AppModelGetValidator, LoginCommon):
     # verification_token: uuid.UUID     # Send via email instead
     verified: bool
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
 
-        schema_extra = {
+        json_schema_extra = {
             'example': {
                 'id': 27,
                 'created_at': datetime.now(),

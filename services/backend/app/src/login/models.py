@@ -28,9 +28,9 @@ class Login(AppModel, SharedModelMixin):
     name:               Mapped[str]         = mapped_column(nullable=True)
     surname:            Mapped[str]         = mapped_column(nullable=True)
 
-    async def create(self) -> Coroutine[Any, Any, AppModel]:
+    async def save(self) -> Coroutine[Any, Any, AppModel]:
         self.password = get_hashed_password(self.password)
-        await super().create(schema_name=SHARED_SCHEMA_NAME)
+        await super().save(schema_name=SHARED_SCHEMA_NAME)
         logger.warning(self.verification_token)
         return self
 

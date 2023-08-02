@@ -109,7 +109,7 @@ async def protected_verified_route(
 )
 async def create_one(item: CreateModelValidator) -> GetModelValidator:
     try:
-        db_item = await Model(**item.dict()).create()
+        db_item = await Model(**item.dict()).save()
         return GetModelValidator.from_orm(db_item)
     except IntegrityError as ex:
         raise HTTPException(

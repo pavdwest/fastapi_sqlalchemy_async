@@ -5,10 +5,10 @@ class TenantCreate(BaseModel):
     identifier: str
 
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
 
-        schema_extra = {
+        json_schema_extra = {
             'example': {
                 'identifier': 'Some Important Client',
             }
@@ -21,10 +21,10 @@ class TenantGet(BaseModel):
     schema_name: str
 
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
 
-        schema_extra = {
+        json_schema_extra = {
             'example': {
                 'id': 27,
                 'schema_name': 'f0e7207e-5568-45ff-b877-74eb658649de',

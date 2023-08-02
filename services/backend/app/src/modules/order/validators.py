@@ -21,10 +21,10 @@ class OrderCommon(BaseModel):
 
 class OrderCreate(AppModelCreateValidator, TimestampValidator, DescriptionValidator, OrderCommon):
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
 
-        schema_extra = {
+        json_schema_extra = {
             'example': {
                 'timestamp': datetime.now(),
                 'description': 'Some order for a client - URGENT!',
@@ -39,10 +39,10 @@ class OrderCreate(AppModelCreateValidator, TimestampValidator, DescriptionValida
 
 class OrderGet(AppModelGetValidator, TimestampValidator, DescriptionValidator, GUIDValidator, OrderCommon):
     class Config:
-        orm_mode = True
-        allow_population_by_field_name = True
+        from_attributes = True
+        populate_by_name = True
 
-        schema_extra = {
+        json_schema_extra = {
             'example': {
                 'id': 27,
                 'created_at': datetime.now(),
